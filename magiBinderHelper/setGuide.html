@@ -1,0 +1,95 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>MTG Sets After Shards of Alara</title>
+
+  <!-- Keyrune set symbol font (black/white icons) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/keyrune@latest/css/keyrune.min.css" />
+</head>
+<body style="font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; padding: 16px;">
+  <h1 style="margin: 0 0 8px;">MTG sets after Shards of Alara (ALA)</h1>
+  <p style="margin: 0 0 16px; color: #444;">
+    Data: MTGJSON SetList • Icons: Keyrune
+  </p>
+
+  <div style="margin-bottom: 12px;">
+    <label>
+      <input type="checkbox" id="hideNoDate" checked />
+      Hide sets with no release date
+    </label>
+  </div>
+
+  <table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse; width: 100%;">
+    <thead>
+      <tr>
+        <th align="left">Symbol (B/W)</th>
+        <th align="left">Set</th>
+        <th align="left">Code</th>
+        <th align="left">Release date</th>
+      </tr>
+    </thead>
+    <tbody id="rows"></tbody>
+  </table>
+
+  <script>
+    const AFTER_DATE = "2008-10-03"; // Shards of Alara release date
+    const SETLIST_URL = "https://mtgjson.com/api/v5/SetList.json";
+
+    const hideNoDateEl = document.getElementById("hideNoDate");
+    const tbody = document.getElementById("rows");
+
+    function esc(s) {
+      return String(s ?? "").replace(/[&<>"']/g, c => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+      }[c]));
+    }
+
+    function render(sets) {
+      const hideNoDate = hideNoDateEl.checked;
+      tbody.innerHTML = "";
+
+      const filtered = sets
+        .filter(s => !hideNoDate || !!s.releaseDate)
+        .filter(s => (s.releaseDate || "9999-12-31") > AFTER_DATE)
+        .sort((a,b) => (a.releaseDate || "9999-12-31").localeCompare(b.releaseDate || "9999-12-31"));
+
+      for (const s of filtered) {
+        const code = (s.code || "").toUpperCase();
+        const name = s.name || "";
+        const date = s.releaseDate || "";
+        const keyrune = (s.keyruneCode || "").toLowerCase();
+
+        // Keyrune uses: <i class="ss ss-zen"></i>
+        // MTGJSON provides keyruneCode that maps to those icons.
+        const iconHtml = keyrune ? `<i class="ss ss-${esc(keyrune)}" style="font-size: 20px;"></i>` : "";
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td align="center">${iconHtml}</td>
+          <td>${esc(name)}</td>
+          <td><code>${esc(code)}</code></td>
+          <td><code>${esc(date)}</code></td>
+        `;
+        tbody.appendChild(tr);
+      }
+    }
+
+    async function main() {
+      const res = await fetch(SETLIST_URL);
+      if (!res.ok) throw new Error(`Failed to fetch SetList: ${res.status}`);
+      const json = await res.json();
+
+      // MTGJSON v5 format: { meta: {...}, data: [...] }
+      const sets = Array.isArray(json.data) ? json.data : [];
+      render(sets);
+
+      hideNoDateEl.addEventListener("change", () => render(sets));
+    }
+
+    main().catch(err => {
+      tbody.innerHTML = `<tr><td colspan="4" style="color: red;">${esc(err.message)}</td></tr>`;
+    });
+  </script>
+</body>
+</html>
