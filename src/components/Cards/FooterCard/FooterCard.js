@@ -7,7 +7,10 @@ export default function Card() {
 
   return (
     <footer className="site-footer">
-      <div ref={ref} className={`footer-inner fade-in ${show ? "show" : ""} fade-delay-2`}>
+      <div
+        ref={ref}
+        className={`footer-inner fade-in ${show ? "show" : ""} fade-delay-2`}
+      >
         <div className="footer-brand">
           <div className="footer-title">Rhystic Games</div>
           <div className="footer-sub">
@@ -16,7 +19,11 @@ export default function Card() {
         </div>
 
         <div className="footer-links">
-          <a href="https://discord.gg/f72rCvfJ" target="_blank" rel="noopener noreferrer">
+          <a
+            href="https://discord.gg/eSTWbtJ59g"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             Discord
           </a>
           <a
@@ -27,7 +34,7 @@ export default function Card() {
             Instagram
           </a>
           <a
-            href="https://www.facebook.com/profile.php?id=6158670467954"
+            href="https://www.facebook.com/RhysticGames"
             target="_blank"
             rel="noopener noreferrer"
           >
