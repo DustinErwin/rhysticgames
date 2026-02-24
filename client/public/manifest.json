@@ -1,0 +1,9 @@
+{
+  "short_name": "Chromatic Dragon",
+  "name": "Chromatic Dragon Games",
+  "icons": [],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
